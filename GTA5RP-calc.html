@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>GTA5 RP Калькулятор</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #fff;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #1f1f1f;
+    }
+    .settings-button {
+      cursor: pointer;
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: #fff;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+    }
+    .box {
+      background-color: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 100%;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+    .result {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>GTA5 RP Калькулятор</h1>
+    <button class="settings-button" onclick="toggleSettings()">⚙️</button>
+  </div>
+
+  <div class="container" id="mainContainer">
+    <!-- Основной калькулятор -->
+    <div id="calculatorSection" class="box">
+      <label for="jobName">Название заработка:</label>
+      <input type="text" id="jobName" placeholder="Например: Перевозка груза">
+
+      <label for="totalEarned">Сколько заработал ($):</label>
+      <input type="number" id="totalEarned" placeholder="Например: 2000">
+
+      <label for="totalSpent">Сколько потратил ($):</label>
+      <input type="number" id="totalSpent" placeholder="Например: 500">
+
+      <label for="hours">Часов потрачено:</label>
+      <input type="number" id="hours" placeholder="Например: 3">
+
+      <button onclick="calculate()">Добавить к общему заработку</button>
+
+      <div class="result" id="result">Общий заработок: $0</div>
+    </div>
+
+    <!-- Калькулятор прокачки -->
+    <div class="box">
+      <h3>📈 Калькулятор прокачки навыка</h3>
+
+      <label for="job">Выберите работу:</label>
+      <select id="job">
+        <option value="strength">Прокачка силы</option>
+        <option value="trucker">Дальнобойщик</option>
+        <option value="port">Порт</option>
+        <option value="construction">Стройка</option>
+        <option value="mine">Шахта</option>
+        <option value="shooting">Стрельба</option>
+        <option value="cooking">Кулинария</option>
+        <option value="fishing">Рыбалка</option>
+        <option value="diver">Дайвер</option>
+        <option value="firefighter">Пожарный</option>
+        <option value="courier">Курьер</option>
+        <option value="postman">Почтальон</option>
+      </select>
+
+      <label for="actions">Сколько действий нужно выполнить?</label>
+      <input type="number" id="actions" placeholder="Например, 120">
+
+      <button onclick="calculateTime()">🔢 Посчитать время прокачки</button>
+
+      <div class="result" id="skillResult">⏳ Время на прокачку: --</div>
+    </div>
+  </div>
+
+  <!-- Настройки -->
+  <div id="settingsSection" class="box hidden">
+    <h3>⚙️ Настройки</h3>
+    <label for="bgColor">Фон страницы:</label>
+    <input type="color" id="bgColor" onchange="updateBackground()">
+
+    <label for="fontFamily">Шрифт:</label>
+    <select id="fontFamily" onchange="updateFont()">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Courier New">Courier New</option>
+    </select>
+
+    <label for="fontSize">Размер шрифта:</label>
+    <input type="range" id="fontSize" min="12" max="24" value="16" onchange="updateFontSize()">
+  </div>
+
+  <script>
+    let totalIncome = 0;
+
+    const jobTimes = {
+      strength: 63,
+      trucker: 480,
+      port: 20,
+      construction: 10,
+      mine: 30,
+      shooting: 5400,
+      cooking: 5,
+      fishing: 60,
+      diver: 240,
+      firefighter: 600,
+      courier: 300,
+      postman: 60
+    };
+
+    function calculate() {
+      const earned = parseFloat(document.getElementById("totalEarned").value) || 0;
+      const spent = parseFloat(document.getElementById("totalSpent").value) || 0;
+      const net = earned - spent;
+      totalIncome += net;
+      document.getElementById("result").innerText = `Общий заработок: $${totalIncome}`;
+    }
+
+    function calculateTime() {
+      const job = document.getElementById("job").value;
+      const actions = parseInt(document.getElementById("actions").value);
+      const seconds = jobTimes[job] * actions;
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      document.getElementById("skillResult").innerText = `⏳ Время на прокачку: ${h}ч ${m}м ${s}с`;
+    }
+
+    function toggleSettings() {
+      document.getElementById("mainContainer").classList.toggle("hidden");
+      document.getElementById("settingsSection").classList.toggle("hidden");
+    }
+
+    function updateBackground() {
+      document.body.style.backgroundColor = document.getElementById("bgColor").value;
+    }
+
+    function updateFont() {
+      document.body.style.fontFamily = document.getElementById("fontFamily").value;
+    }
+
+    function updateFontSize() {
+      document.body.style.fontSize = document.getElementById("fontSize").value + "px";
+    }
+  </script>
+</body>
+</html>
+
